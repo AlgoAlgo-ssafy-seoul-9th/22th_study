@@ -95,7 +95,7 @@ def moving(R:int, C:int, M:int, ocean:list, sharks:list) -> None:
                         while k > R-1:
                             k -= R-1
                             dir += 1
-                        
+
                         if dir%2:
                             r = k+1
                             d = 2
@@ -111,17 +111,17 @@ def moving(R:int, C:int, M:int, ocean:list, sharks:list) -> None:
                         while k > R-1:
                             k -= R-1
                             dir += 1
-                        
+
                         if dir%2:
                             r = R-k
                             d = 1
                         else:
                             r = k+1
-                            
+
                     else:
                         r += s
-                    
-                    
+
+
                 elif d == 3:        # 오른쪽
                     if s > C-c:
                         k = s-(C-c)
@@ -129,13 +129,13 @@ def moving(R:int, C:int, M:int, ocean:list, sharks:list) -> None:
                         while k > C-1:
                             k -= C-1
                             dir += 1
-                        
+
                         if dir%2:
                             c = C-k
                             d = 4
                         else:
                             c = k+1
-                            
+
                     else:
                         c += s
                 else:               # 왼쪽
@@ -145,13 +145,13 @@ def moving(R:int, C:int, M:int, ocean:list, sharks:list) -> None:
                         while k > C-1:
                             k -= C-1
                             dir += 1
-                        
+
                         if dir%2:
                             c = k+1
                             d = 3
                         else:
                             c = C-k
-                            
+
                     else:
                         c -= s
             # 상어 정보 업데이트
@@ -245,7 +245,7 @@ for i in range(len(all_word)):
     if tmp >= bl and stack[-1] == bomb[-1]:
         if stack[tmp-bl:] == bomb:
             stack = stack[:tmp-bl]
-    
+
 
 print(*stack, sep='')
 ```
@@ -362,7 +362,39 @@ print(ans)
 ### [상미](./점프하며%20이동하기/상미.py)
 
 ```py
+import sys
+from collections import deque
 
+input = sys.stdin.readline
+
+n = int(input())
+sx, sy, ex, ey = map(int, input().split())
+dx = [-1, -2, -2, -1, 1, 2, 2, 1]
+dy = [-2, -1, 1, 2, 2, 1, -1, -2]
+
+visited = [[False] * n for _ in range(n)]
+visited[sx - 1][sy - 1] = True
+
+queue = deque([(sx - 1, sy - 1, 0)])
+minCnt = 10000000
+
+while queue:
+    tx, ty, cnt = queue.popleft()
+
+    if (tx, ty) == (ex - 1, ey - 1):
+        if cnt <= minCnt:
+            minCnt = cnt
+
+    for i in range(8):
+        nx, ny = tx + dx[i], ty + dy[i]
+        if 0 <= nx < n and 0 <= ny < n and not visited[nx][ny]:
+            visited[nx][ny] = True
+            queue.append((nx, ny, cnt + 1))
+
+if minCnt == 10000000:
+    print(-1)
+else:
+    print(minCnt)
 ```
 
 ### [성구](./점프하며%20이동하기/성구.py)
@@ -444,13 +476,13 @@ def dfs():
         return 0
     if len(ans) >= 10_000 or cnt >= 10_000:
         return 1
-       
+
     for i in range(N):
         if not visited[i]:
             stack.append(arr[i])
             visited[i] = 1
             if dfs():
-                return 1            
+                return 1
             stack.pop()
             visited[i] = 0
     return 0
@@ -483,7 +515,5 @@ else:
 
 <details markdown="1">
 <summary>접기/펼치기</summary>
-
-
 
 </details>
