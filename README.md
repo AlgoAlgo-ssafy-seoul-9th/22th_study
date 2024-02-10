@@ -14,6 +14,46 @@
 ### [민웅](./웜홀/민웅.py)
 
 ```py
+# 1865_웜홀_Wormhole
+import sys
+input = sys.stdin.readline
+
+def bellman_Ford(start):
+    distance[start] = 0
+
+    for i in range(1, N+1):
+        for j in range(1, N+1):
+            for node, cost in graph[j]:
+                # if distance[j] != 10001:
+                if distance[node] > distance[j] + cost:
+                    distance[node] = distance[j] + cost
+                    if i == N:
+                        return True
+    return False
+
+
+T = int(input())
+
+for tc in range(T):
+    N, M, W = map(int, input().split())
+    # S 시작지점, E 도착지점, T 도로이동시간, 줄어드는시간
+    graph = [[] for _ in range(N+1)]
+    distance = [10001]*(N+1)
+    # print(distance)
+    for i in range(M):
+        S, E, T = map(int, input().split())
+        graph[S].append([E, T])
+        graph[E].append([S, T])
+    for i in range(W):
+        S, E, T = map(int, input().split())
+        graph[S].append([E, -T])
+
+    ans = bellman_Ford(1)
+    # print(distance)
+    if ans:
+        print('YES')
+    else:
+        print('NO')
 
 
 ```
@@ -133,7 +173,79 @@ for _ in range(TC):
 ### [민웅](./낚시왕/민웅.py)
 
 ```py
+# 17143_낚시왕_fishing-master
+import sys
+input = sys.stdin.readline
+dxy = [(-1, 0), (1, 0), (0, 1), (0, -1)]
 
+
+def get_shark(column, sharks_field):
+    point = 0
+    for i in range(R):
+        if sharks_field[i][column]:
+            point = sharks_field[i][column][2]
+            sharks_field[i][column] = 0
+            break
+
+    return point, sharks_field
+
+
+def move_shark(sharks_field):
+    shark_tmp = []
+    for i in range(R):
+        for j in range(C):
+            if sharks_field[i][j]:
+                S, D, Z = sharks_field[i][j]
+                if D in [1, 2]:
+                    S = S%(2*R-2)
+                else:
+                    S = S%(2*C-2)
+                nx, ny = i, j
+                dx, dy = dxy[D-1]
+                for _ in range(S):
+                    if not (0 <= nx + dx <= R-1) or not (0 <= ny + dy <= C-1):
+                        if D in [1, 2]:  # 상하 반전
+                            D = 3 - D
+                        else:  # 좌우 반전
+                            D = 7 - D
+                        dx, dy = dxy[D-1]
+                    nx, ny = nx + dx, ny + dy
+
+                sharks_field[i][j] = 0
+                # print(i, j, nx, ny)
+                shark_tmp.append([nx, ny, S, D, Z])
+
+    for sh in shark_tmp:
+        r, c, s, d, z = sh
+        if sharks_field[r][c]:
+            if z > sharks_field[r][c][2]:
+                sharks_field[r][c] = [s, d, z]
+        else:
+            sharks_field[r][c] = [s, d, z]
+
+    return sharks_field
+
+
+R, C, M = map(int, input().split())
+
+field = [[0]*C for _ in range(R)]
+
+for _ in range(M):
+    r, c, s, d, z = map(int, input().split())
+    field[r-1][c-1] = [s, d, z]
+
+master = 0
+ans = 0
+while True:
+    if master == C:
+        break
+
+    p, field = get_shark(master, field)
+    field = move_shark(field)
+    ans += p
+    master += 1
+
+print(ans)
 
 ```
 
