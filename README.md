@@ -61,6 +61,44 @@ for tc in range(T):
 ### [병국](./웜홀/병국.py)
 
 ```py
+def gogo(start):
+    dis = [10001] * (n+1)
+    dis[start] = 0
+
+    # 노드만큼 돌릴건데
+    for i in range(n):
+
+        # 원래 한사이클 돌면 갱신이 다된다.
+        for start,end,distance in road:
+            if dis[end] > dis[start]+distance:
+                dis[end] = dis[start]+distance
+                # 근데 i == n-1 까지 갱신을 할 수 있다?
+                # 사이클이 존재한다는 것
+                if i == n-1:
+                    return False
+        # print(i,dis)
+    return True
+
+
+INF = float('inf')
+tc = int(input())
+for t in range(tc):
+    n,m,w = map(int,input().split())
+    road = []
+    for _ in range(m):
+        s, e, t = map(int, input().split())
+        road.append((s,e,t))
+        road.append((e,s,t))
+    for _ in range(w):
+        s, e, t = map(int, input().split())
+        road.append((s,e,-t))
+    # print(road)
+    answer = gogo(1)
+    # print(answer)
+    if answer == False:
+        print('YES')
+    else:
+        print('NO')
 
 
 ```
@@ -252,7 +290,74 @@ print(ans)
 ### [병국](./낚시왕/병국.py)
 
 ```py
+import sys
+input = sys.stdin.readline
+def move_shark():
+    new_sea = [[0] * C for _ in range(R)]
+    for i in range(R):
+        for j in range(C):
+            x = i
+            y = j
+            # 상어있으면 이동
+            if sea[i][j] != 0:
+                direction = [sea[i][j][1]]
+                dx = direction[0][0]
+                dy = direction[0][1]
+                # 속력만큼 갈거임
+                # print(sea[i][j])
+                for k in range(sea[i][j][0]):
+                    nx = x + dx
+                    ny = y + dy
+                    # 범위 안에 있으면
+                    if 0<=nx<R and 0<=ny<C:
+                        pass
+                    # 범위 넘어가면
+                    else:
+                        # 방향바꾸고
+                        dx = -dx
+                        dy = -dy
+                    x += dx
+                    y += dy
+                # print(x,y,dx,dy)
+                # 이미 있으면 크기비교
+                if new_sea[x][y] != 0:
+                    if new_sea[x][y][2] < sea[i][j][2]:
+                        new_sea[x][y] = (sea[i][j][0],(dx,dy),sea[i][j][2])
+                else:
+                    new_sea[x][y] = (sea[i][j][0], (dx, dy), sea[i][j][2])
+    return new_sea
 
+
+
+dir = [(-1,0),(1,0),(0,1),(0,-1)]
+
+R,C,M = map(int,input().split())
+sea = [[0]*C for _ in range(R)]
+for _ in range(M):
+    # r,c 위치, s 속력, d 방향, z 크기
+    r,c,s,d,z = map(int,input().split())
+    r -= 1
+    c -= 1
+    d -= 1
+    # print(d)
+    sea[r][c] = [s,dir[d],z]
+
+# 총 C초동안 이동함
+# 상어 잡고
+# 상어 움직인다.
+answer = 0
+for i in range(C):
+    # i 열에 있는 상어부터 잡기
+    for j in range(R):
+        # 상어가 있으면
+        if sea[j][i] != 0:
+            # 크기만큼 더해
+            answer += sea[j][i][2]
+            sea[j][i] = 0
+            break
+    sea = move_shark()
+    # print(sea)
+print(answer)
 
 ```
 
@@ -517,7 +622,22 @@ print(*stack, sep='')
 ### [병국](./단어%20삭제/병국.py)
 
 ```py
+word = input()
+delete = input()
+len_delete = len(delete)
+# print(word)
 
+# while True:
+#     if delete in word:
+answer = ''
+for i in range(len(word)):
+    answer += word[i]
+    if delete in answer:
+        i -= len_delete
+        answer = answer[:len(answer)-len_delete]
+        # print(answer)
+print(answer)
+    # print(word[i])
 
 ```
 
@@ -633,6 +753,36 @@ print(ans)
 ### [병국](./점프하며%20이동하기/병국.py)
 
 ```py
+n = int(input())
+r1,c1,r2,c2 = map(int,input().split())
+
+
+direction = [(-1,-2),(1,-2),(-2,-1),(-2,1),(2,1),(2,-1),(1,2),(-1,2)]
+
+# arr = [[0]*n for _ in range(n)]
+v = [[0]*n for _ in range(n)]
+
+
+q = [(r1-1,c1-1,0)]
+# arr[r1-1][c1-1] = 1
+v[r1-1][c1-1] = 1
+
+
+flag = False
+answer = -1
+while q:
+    x,y,cnt = q.pop(0)
+    if x == r2-1 and y == c2-1:
+        flag = True
+        answer = cnt
+        break
+    for dx,dy in direction:
+        nx = x+dx
+        ny = y+dy
+        if 0<=nx<n and 0<=ny<n and v[nx][ny] == 0:
+            v[nx][ny] = 1
+            q.append((nx,ny,cnt+1))
+print(answer)
 
 
 ```
